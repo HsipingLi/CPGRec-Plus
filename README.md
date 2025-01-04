@@ -9,7 +9,9 @@
 See file ***requirements.txt*** for details.
 
 ## Dataset
-https://drive.google.com/file/d/1F9kr_YWimBtexJEH-zkDzCOwl1q7GmFp/view
+Download: https://drive.google.com/file/d/1F9kr_YWimBtexJEH-zkDzCOwl1q7GmFp/view
+
+Please put the downloaded dataset in the folder ***steam_data***.
 
 ## To Run the Code
 ***run.sh***
