@@ -24,8 +24,6 @@ fillnan = lambda x: torch.where(torch.isnan(x), torch.nanmean(x), x)
 normalize = lambda x: (x - x.min()) / (x.max() - x.min())
 preprocess = lambda x: normalize(fillnan(x))
 
-os.chdir('/home/lixiping/CPGRec_plus')
-
 def setup_seed(seed=3407):
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
