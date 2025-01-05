@@ -229,7 +229,7 @@ if __name__ == '__main__':
     # t, r = torch.tensor(boxcox(t+1e-6)[0]), torch.tensor(boxcox(r+1e-6)[0])
     f_stat = t**2/r**2
     alpha = 0.05
-    Q_u, Q_l = f.ppf(alpha, 1, 1), f.ppf(1-alpha, 1, 1)
+    Q_l, Q_u = f.ppf(alpha, 1, 1), f.ppf(1-alpha, 1, 1)
     mask_pos, mask_neg = f_stat >= Q_u, f_stat <= Q_l
     mask_one = ~ (mask_pos | mask_neg)
 
