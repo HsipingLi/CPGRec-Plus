@@ -226,7 +226,7 @@ if __name__ == '__main__':
     DataLoader.user_game = concate_rating(DataLoader.user_game, path_dic_app_info)
     t, r = DataLoader.user_game[:,2], DataLoader.user_game[:,3]
     t, r = preprocess(t), preprocess(r)
-    # t, r = torch.tensor(boxcox(t+1e-6)[0]), torch.tensor(boxcox(r+1e-6)[0])
+    t, r = torch.tensor(boxcox(t+1e-6)[0]), torch.tensor(boxcox(r+1e-6)[0])
     f_stat = t**2/r**2
     alpha = 0.05
     Q_l, Q_u = f.ppf(alpha, 1, 1), f.ppf(1-alpha, 1, 1)
@@ -241,7 +241,7 @@ if __name__ == '__main__':
     weight_PER = torch.ones_like(info_cont)
     weight_PER[mask_pos] = info_cont[mask_pos]
     weight_PER[mask_neg] = info_cont[mask_neg] * (-1)
-    weight_PER[mask_one] = torch.ones(mask_one.sum(),dtype=torch.float64)
+    weight_PER[mask_one] = torch.zeros(mask_one.sum(),dtype=torch.float64)
 
 
 #Init Model
