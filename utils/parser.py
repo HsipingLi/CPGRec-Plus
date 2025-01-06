@@ -2,7 +2,7 @@ import argparse
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--seed', default = 3407, type = int)
+    parser.add_argument('--seed', default = 421, type = int)
     parser.add_argument('--embed_size', default = 32, type = int)
     parser.add_argument('--lr', default = 0.03, type = float)
     parser.add_argument('--epoch', default = 1000, type = int)
