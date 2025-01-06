@@ -7,6 +7,17 @@
 
 ## Environment
 See file ***requirements.txt*** for details.
+Profile:
+cuda - 11.3
+dgl - 0.9.1.post1
+numpy - 1.24.4
+torch - 1.12.1
+torchaudio - 0.12.1
+torchvision - 0.13.1
+python - 3.9
+
+
+
 
 ## Dataset
 Download: https://drive.google.com/file/d/1F9kr_YWimBtexJEH-zkDzCOwl1q7GmFp/view
