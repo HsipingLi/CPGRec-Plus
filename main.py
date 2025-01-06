@@ -20,10 +20,6 @@ from models.Predictor import Predictor
 import pickle
 from scipy.stats import boxcox, f
 
-fillnan = lambda x: torch.where(torch.isnan(x), torch.nanmean(x), x)
-normalize = lambda x: (x - x.min()) / (x.max() - x.min())
-preprocess = lambda x: normalize(fillnan(x))
-
 def setup_seed(seed=3407):
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
@@ -168,7 +164,7 @@ def validate(valid_mask, dic, h, ls_k, mapping_genre,mapping_dev,mapping_pub, to
 
 
 
-def concate_rating(inter, path_dic_app_info):
+def concate_rating(DataLoader, path_dic_app_info):
     
     path_inter_concated = "./data_exist/user_game_concated.pth"
     if os.path.exists(path_inter_concated):
@@ -179,11 +175,13 @@ def concate_rating(inter, path_dic_app_info):
         with open(path_dic_app_info, "rb") as f:
             dic_app_info = pickle.load(f)
 
+        inter = DataLoader.user_game
         inter = torch.hstack([inter, torch.ones(size=(inter.shape[0], 1))])
 
         for game in tqdm(dic_app_info.keys()):
             index = (inter[:,1]==game)
-            inter[index,-1] = float(dic_app_info[game][-2]) #dic_app_info[game][-2]: average rating of game
+            inter[index,-1:] = torch.tensor(dic_app_info[game][-1:].astype(float))*torch.ones_like(inter[index, -1:])              
+
                
         torch.save(inter, path_inter_concated)
         return inter
@@ -223,15 +221,16 @@ if __name__ == '__main__':
 #Prepare Weight of PER Module
 
     path_dic_app_info = "./data_exist/dic_app_info.pkl"
-    DataLoader.user_game = concate_rating(DataLoader.user_game, path_dic_app_info)
+    DataLoader.user_game = concate_rating(DataLoader, path_dic_app_info)
     t, r = DataLoader.user_game[:,2], DataLoader.user_game[:,3]
-    t, r = preprocess(t), preprocess(r)
     t, r = torch.tensor(boxcox(t+1e-6)[0]), torch.tensor(boxcox(r+1e-6)[0])
     f_stat = t**2/r**2
     alpha = 0.05
     Q_l, Q_u = f.ppf(alpha, 1, 1), f.ppf(1-alpha, 1, 1)
     mask_pos, mask_neg = f_stat >= Q_u, f_stat <= Q_l
     mask_one = ~ (mask_pos | mask_neg)
+
+
 
     def norm_pdf(x):
         return (1 / torch.sqrt(2 * torch.tensor(torch.pi))) * torch.exp(-x**2 / 2)
@@ -300,3 +299,6 @@ if __name__ == '__main__':
                     logging.info('early stop')
                     break
 
+        
+        if epoch==args.epoch-1:
+            validate(valid_mask, DataLoader.test_data, h, ls_k, DataLoader_item.genre,DataLoader_item.developer,DataLoader_item.publisher, to_get_coverage = True)
